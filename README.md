@@ -32,9 +32,42 @@ git rev-parse HEAD
 
 W odpowiedzi na polecenie powinno pojawić się `de5ca7980563851aabb953d0cbd05d527ce41cbb`.
 
-## Przygotowanie poprawek
+## Instalalcja poprawek do aplikacji
 
-Poprawki wprowadzamy w projecie, którego kody pobraliśmy we wcześniejszym kroku. Pamietajmy o prowadzeniu listy zmienionych plików i bieżącej aktualizacji skryptów i plików pomocniczych.
+W poprzednim kroku przygotowaliśmy odpowiedną wersję kodów aplikacji. W bierzącym katalogu projektu znajduje się katalog `fixes-src`. Zawiera on wszelkie poprawki niezbędne do wdrożennia produktu wraz z oczerkiwaną funkcjonalnością. Zachowana jest oryginalna struktura katalogów projekktu Apache SuperSet.
+
+Aby zainstalować poprawki należy skopiować pliki z katalogu `fixes-src` do katalogu `superset-6.0-sci`. Możemy się w tym celu posiłkować sktyptem `03-install.sh`. Przed jego użyciem edytuj go i pamietaj o ustawieniu odpowiednich wartości zmiennych `SOURCE_PATH` oraz `TARGET_PATH`:
+
+```bash title="./03-install.sh"
+# SOURCE_PATH - katalog z poprawkami.
+export SOURCE_PATH="fixes-src"
+# SOURCE_PATH - katalog z docelowym projketem Apache SuperSet 
+export TARGET_PATH="../superset-6.0-sci"
+```
+
+Po wprowadzeniu odpowiednich zmian uruchom go:
+
+```bash
+./03-install.sh
+```
+
+Katalog ten zawieira plik [CHANGELOG.md](./fixes-src/CHANGELOG.md) opisujący cel i konieczność tych poprawek.
+
+## Skonfigurowanie kompozycji Docker'a
+
+### Przygotowanie wolumenów
+
+### Konfiguracja w pliku `docker/.env`
+
+### Budowa kompozycji
+
+### Uruchomienie kompozycji
+
+### Zatrzymanie kompozycji
+
+## Końcowe uwagi dla developerów
+
+Poprawki wprowadzamy w projecie, którego kody pobraliśmy i przygotowaliśmy metodą opisaną w **Przygotowanie repozytorium GIT aplikacji Apache SuperSet**. Pamietajmy o prowadzeniu listy zmienionych plików i bieżącej aktualizacji skryptów i plików pomocniczych.
 
 | Nazwa pliku | Opis |
 | :--- | :--- |

@@ -1,5 +1,13 @@
 # Log zmian do `de5ca7980563851aabb953d0cbd05d527ce41cbb`
 
+Zmiany konieczne do konfiguracji głównego kontekstu aplikacji Apache SuperSet. Po mimo istnienia oficjalnego dokumentu [Configuring the application root](https://superset.apache.org/docs/configuration/configuring-superset/#configuring-the-application-root) opisującego jak zmienić głównny kontekst aplikacji, to opisany mechanizm nie do końca działa (jeżeli można tak to opisać). Główną przyczyną jest brak wcześniejszego założenia by aplikacja działała w takim trybie. Przeanalizowałem kod i poprawiłemm błędy. Niestety nie mam czasu by zrobić to porządnie, by odpowiednio sparametryzwoać aplikację. W niektórych przypadkach po prostu zahardkodowałem kontekst aplikacji. Wprowadzone przeze mnie zmiany sprawiają, że aplikacja działa poprawnie w kontekścice `/analytics`.
+
+:::warning
+
+Ograniczennia czasowe spowodowały, że wprowadzone do projektu zmiany nie parametryzują go w pełni, a wprowadzają stały kontetkst aplikacji `/analytics`.
+
+:::
+
 ## Zmiana kontekstu aplikacji
 
 W celu naprawienia mechanizmów przeniesienia głównego kontekstu z `/` do `/analytics` wprowadzono nanstępujące zmiany w kodzie aplikacji i jej konfiguracji.

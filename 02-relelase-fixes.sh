@@ -18,8 +18,6 @@ upload () {
 	scp ${SOURCE_PATH}${1} ${TARGET_PATH}${1}
 }
 
-
-
 # Zmiany w skryptach Docker'a'
 mktdir /
 upload /docker-compose.yml

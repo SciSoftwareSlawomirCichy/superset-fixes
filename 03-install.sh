@@ -1,6 +1,7 @@
 #!/bin/bash
-
+# SOURCE_PATH - katalog z poprawkami.
 export SOURCE_PATH="fixes-src"
+# SOURCE_PATH - katalog z docelowym projketem Apache SuperSet 
 export TARGET_PATH="../superset-6.0-sci"
 
 upload () {
