@@ -41,7 +41,3 @@ Poprawki wprowadzamy w projecie, którego kody pobraliśmy we wcześniejszym kro
 | `01-deploy-test.sh` | Skrypt pomocniczy pozwalający na wysłanie zmian do maszyny, na której testowane jest rozwiązanie. |
 | `02-relelase-fixes.sh` | Skrypt pomocniczy pozwalający utworzenie paczki zmian gotowych do instalacji. |
 | `03-install.sh` | Skrypt pomocniczy będący podstawą instalacji. Zobacz [README](./fixes-src/README.md) |
-  
-
-
-
