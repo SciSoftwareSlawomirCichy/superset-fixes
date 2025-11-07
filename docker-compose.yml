@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: superset_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: superset_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U superset"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  superset:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: superset_app
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://superset:superset@postgres:5432/superset
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-CHANGE_ME_TO_A_COMPLEX_RANDOM_SECRET}
+      - SUPERSET_ENV=production
+      - SUPERSET_LOAD_EXAMPLES=no
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./superset_config.py:/app/superset_config.py:ro
+      - superset_home:/app/superset_home
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+      superset db upgrade &&
+      superset fab create-admin \
+        --username admin \
+        --firstname Superset \
+        --lastname Admin \
+        --email admin@superset.com \
+        --password admin &&
+      superset init &&
+      gunicorn \
+        --bind 0.0.0.0:8088 \
+        --workers 4 \
+        --worker-class gevent \
+        --timeout 120 \
+        --limit-request-line 0 \
+        --limit-request-field_size 0 \
+        'superset.app:create_app()'
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  superset-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: superset_init
+    environment:
+      - DATABASE_URL=postgresql://superset:superset@postgres:5432/superset
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-CHANGE_ME_TO_A_COMPLEX_RANDOM_SECRET}
+    volumes:
+      - ./superset_config.py:/app/superset_config.py:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+      superset db upgrade &&
+      superset fab create-admin \
+        --username admin \
+        --firstname Superset \
+        --lastname Admin \
+        --email admin@superset.com \
+        --password admin &&
+      superset init
+      "
+    restart: "no"
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  superset_home:
+    driver: local

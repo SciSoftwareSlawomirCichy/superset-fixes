@@ -1,0 +1,39 @@
+# Apache Superset and its dependencies
+
+# Core Superset package
+apache-superset==3.1.0
+
+# Additional database drivers (uncomment as needed)
+# PostgreSQL
+psycopg2-binary==2.9.9
+
+# MySQL
+# mysqlclient==2.2.0
+
+# Microsoft SQL Server
+# pymssql==2.2.8
+
+# Oracle
+# cx-Oracle==8.3.0
+
+# Google BigQuery
+# pybigquery==0.10.2
+
+# Snowflake
+# snowflake-sqlalchemy==1.5.1
+
+# Presto/Trino
+# pyhive[presto]==0.7.0
+
+# Elasticsearch
+# elasticsearch-dbapi==0.2.9
+
+# Additional caching
+redis==5.0.1
+
+# Celery for async queries (optional)
+celery==5.3.4
+
+# Additional utilities
+gunicorn==21.2.0
+gevent==23.9.1
