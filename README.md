@@ -180,7 +180,7 @@ Poprawki wprowadzamy w projecie, którego kody pobraliśmy i przygotowaliśmy me
 
 ## Utworzenie obrazów kontenerów Docker'a
 
-Obrazy utworzą się automatycznie podczas uruchomienia kompozycji z opcja `--build`. Opcjonalnie możemy wcześniej przygotować obraz aplikacji i ewentualnie umieścić go w repozytorium Docker w celu przyspieszenia tworzenia i uruchamiania kompozycji. Poniżej polecenia tworzenia obrazów.
+Obrazy utworzą się automatycznie podczas uruchomienia kompozycji z opcja `--build`. Opcjonalnie możemy wcześniej przygotować obrazy komponenntów aplikacji i ewentualnie umieścić je w repozytorium Docker'a. Ta operacja przyspieszy tworzenie i uruchamianie kompozycji. Poniżej polecenia tworzenia obrazów.
 
 >[!WARNING]
 > Polecenia tworzenia obrazów wydajemy w katalogu projketu **Apache SuperSet** po "zainstalowaniu" poprawek. Pamiętaj również o tym, by odpowiednio zmodyfikować konfigurację kompozycji w pliku `docker-compose.yml` tak aby użyła utworzone przez nas obrazy.
@@ -219,9 +219,13 @@ cd superset-websocket
 docker build -f Dockerfile --no-cache -t apache/superset-websocket:$SUP_VERSION .
 ```
 
+O tym jak umieszczać obrazy w repozytorium Docker'a dowiesz się na stronie [Docker Hub](https://hub.docker.com/).
+
 ## GUI wspierające zarządzanie kontenerami
 
 Do zarządzania kontenerami Docker w środowisku Linux możemy się wesprzeć oprogramowaniem **[portainer.io](https://www.portainer.io/solutions/portainer-for-enterprise)**.
+
+![./docs/02_screen_portainer.png](./docs/02_screen_portainer.png)
 
 ### Uruchomineie Portainer
 
