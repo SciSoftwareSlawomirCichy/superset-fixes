@@ -5,6 +5,7 @@ export SOURCE_PATH="fixes-src"
 export TARGET_PATH="../superset-6.0-sci"
 
 upload () {
+  echo "Uploading file: ${TARGET_PATH}${1}"
 	scp ${SOURCE_PATH}${1} ${TARGET_PATH}${1}
 }
 
