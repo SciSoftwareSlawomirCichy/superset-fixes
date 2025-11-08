@@ -16,7 +16,7 @@ export TARGET_PATH="superset-6.0-sci"
 Po wprowadzeniu odpowiednich zmian uruchom go:
 
 ```bash
-# Przejdź do katalogu głownego projektu superset-fixes.
+# Przejdź do katalogu głównego projektu superset-fixes.
 cd ..
 ./03-install.sh
 ```
