@@ -2,11 +2,8 @@
 
 Zmiany konieczne do konfiguracji głównego kontekstu aplikacji Apache SuperSet. Po mimo istnienia oficjalnego dokumentu [Configuring the application root](https://superset.apache.org/docs/configuration/configuring-superset/#configuring-the-application-root) opisującego jak zmienić głównny kontekst aplikacji, to opisany mechanizm nie do końca działa (jeżeli można tak to opisać). Główną przyczyną jest brak wcześniejszego założenia by aplikacja działała w takim trybie. Przeanalizowałem kod i poprawiłemm błędy. Niestety nie mam czasu by zrobić to porządnie, by odpowiednio sparametryzwoać aplikację. W niektórych przypadkach po prostu zahardkodowałem kontekst aplikacji. Wprowadzone przeze mnie zmiany sprawiają, że aplikacja działa poprawnie w kontekścice `/analytics`.
 
-:::warning
-
-Ograniczennia czasowe spowodowały, że wprowadzone do projektu zmiany nie parametryzują go w pełni, a wprowadzają stały kontetkst aplikacji `/analytics`.
-
-:::
+> [!WARNING]
+> Ograniczennia czasowe spowodowały, że wprowadzone do projektu zmiany nie parametryzują go w pełni, a wprowadzają stały kontetkst aplikacji `/analytics`.
 
 ## Zmiana kontekstu aplikacji
 
@@ -14,7 +11,7 @@ W celu naprawienia mechanizmów przeniesienia głównego kontekstu z `/` do `/an
 
 ### `superset/initialization/__init__.py`
 
-Zmiana ustwień linku przy ikonie "Home" w linii 292.
+Zmiana ustwień linku przy ikonce aplikacji "Home" w linii 292.
 
 ```py title="/superset/superset/initialization/__init__.py: 292"
     appbuilder.add_link(
@@ -134,15 +131,12 @@ const defaultUnauthorizedHandlerForPrefix = (appRoot: string) => () => {
 
 Było `/login?next=${window.location.href}`, bez `%2Fanalytics`.
 
-:::warning
-
-Poniżej lista plików, którym należy się przyjrzeć czy czasem nie sprawią kłopotów podczas zmiany kontekstu głównego aplikacji⁉️
-
-:::
+>[!NOTE]
+> Poniżej lista plików, którym należy się przyjrzeć czy czasem nie sprawią kłopotów podczas zmiany kontekstu głównego aplikacji⁉️
 
 | Plik  | Lokalizacja zagrożenia |
 | :--- | :--- |
-| `src/views/routes.tsx` | W linii 181 znajduje się definicja `export const routes: Routes = {}`. Na razie nie zauwazyłem impaktu na odpowiednią komunikacjcę pomiędzy poszczególnymi komponentami aplikacji, ale trzeba mieć ją na uwadze. |
+| `src/views/routes.tsx` | W linii 181 znajduje się definicja `export const routes: Routes = {}`. Na razie nie zauważyłem impaktu (wpływu) na odpowiednią komunikacjcę pomiędzy poszczególnymi komponentami aplikacji, ale trzeba mieć ją na uwadze. |
 
 ## Zmiany konfiguracji budowania aplikacji
 
@@ -234,7 +228,7 @@ networks:
     
 ```
 
-* Dodano do definicji kontenerów parametry `hostname` oraz `network`. Uzupełniono `links` pozwalające na zbudowanie poprawniej zalezności między kontenerami.Poniżej przykład konfiguracji kontenera `superset`.
+* Dodano do definicji kontenerów parametry `hostname` oraz `network`. Uzupełniono `links` pozwalające na zbudowanie poprawniej zależności między kontenerami.Poniżej przykład konfiguracji kontenera `superset`.
 
 ```yaml title="/superset/docker-compose.yml"
     hostname: superset
@@ -294,6 +288,8 @@ volumes:
 
 Dodano parametry, które są niezbędne do budowania i uruchomienia aplikacji w środowisku kontenerowym.
 
+* Podstawowe parametry konfiguracji kompozycji:
+
 ```properties title="/superset/docker/.env"
 SUP_VERSION=superset-6.0-sci
 SUP_NODE_VERSION=superset-6.0-sci
@@ -310,13 +306,13 @@ VOLUME_WEBSOCKET_NMP=/home/superset/superset_websocket_nmp
 VOLUME_NGINX_LOGS=/home/superset/nginx_logs
 ```
 
-W linii 69 dodano:
+* W linii 69 dodano:
 
 ```properties title="/superset/docker/.env linia: 69"
 REDIS_SSL=false
 ```
 
-W linii 70 zmieniono wartość parametru `SUPERSET_APP_ROOT`:
+* W linii 70 zmieniono wartość parametru `SUPERSET_APP_ROOT`:
 
 ```properties title="/superset/docker/.env linia: 69"
 SUPERSET_APP_ROOT="/analytics"
@@ -339,7 +335,7 @@ Zmieniono skrypt uruchamiany w kontenerze. Wcześniej, w opisie zmian pliku `sup
 
 Dostosowano szablon konfiguracji serwera `Nginx` do wprowadzonych zmian związanych z budową kompozycji.
 
-W linii 19 zmieniono nazwę kontenera z aplikacją SuperSet:
+* W linii 19 zmieniono nazwę kontenera z aplikacją SuperSet:
 
 ```conf title="/superset/docker/nginx/templates/superset.conf.template linia: 19"
 upstream superset_app {
@@ -348,7 +344,7 @@ upstream superset_app {
 }
 ```
 
-W linii 24 zmieniono nazwę kontenera z aplikacją SuperSet WebSocket:
+* W linii 24 zmieniono nazwę kontenera z aplikacją SuperSet WebSocket:
 
 ```conf title="/superset/docker/nginx/templates/superset.conf.template linia: 19"
 upstream superset_websocket {
@@ -357,7 +353,7 @@ upstream superset_websocket {
 }
 ```
 
-Poprawiono definicję proxy:
+* Poprawiono definicję proxy:
 
 ```conf title="/superset/docker/nginx/templates/superset.conf.template linia: 31"
 server {
@@ -396,15 +392,12 @@ server {
 
 ### `docker/pythonpath_dev/superset_config.py`
 
-Trzeba było oprawić konfigurację aplikacji, dostosować ją równnież do nowych ustawień związanych z niedomyślnym kontekstem aplikacji ustawionym teraz na `/analytics`.
+Trzeba było poprawić konfigurację aplikacji, dostosować ją równnież do nowych ustawień związanych z niedomyślnym kontekstem aplikacji ustawionym teraz na `/analytics`.
 
-Parametry aplikacji i kontekstu:
+* Parametry aplikacji i kontekstu:
 
-:::warning
-
-Parametr `GLOBAL_ASYNC_QUERIES_JWT_SECRET` musi przyjować taką samą wartość jak pramaetr `"jwtSecret"` w pliku `docker/superset-websocket/config.json`.
-
-:::
+> [!WARNING]
+> Parametr `GLOBAL_ASYNC_QUERIES_JWT_SECRET` musi przyjować taką samą wartość jak pramaetr `"jwtSecret"` w pliku `docker/superset-websocket/config.json`.
 
 ```py title="/superset/docker/pythonpath_dev/superset_config.py"
 APP_NAME = "Sci Superset"
@@ -416,7 +409,7 @@ GLOBAL_ASYNC_QUERIES_WEBSOCKET_URL = "ws://superset-websocket:8080/"
 GLOBAL_ASYNC_QUERIES_JWT_COOKIE_NAME = "async-token"
 ```
 
-Parametry komunikacji z pamięcią podręczną:
+* Parametry komunikacji z pamięcią podręczną:
 
 ```py title="/superset/docker/pythonpath_dev/superset_config.py"
 # Global async queries cache backend configuration options:
@@ -441,7 +434,7 @@ GLOBAL_ASYNC_QUERIES_CACHE_BACKEND = {
 }
 ```
 
-Parametry włączonych funkcjonalności (właczenie zapytań asynchronicznych):
+* Parametry włączonych funkcjonalności (włączenie zapytań asynchronicznych):
 
 ```py title="/superset/docker/pythonpath_dev/superset_config.py"
 FEATURE_FLAGS = {"ALERT_REPORTS": True, "GLOBAL_ASYNC_QUERIES": True}
