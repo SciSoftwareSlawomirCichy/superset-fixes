@@ -180,7 +180,7 @@ Poprawki wprowadzamy w projecie, którego kody pobraliśmy i przygotowaliśmy me
 
 ## Utworzenie obrazów kontenerów Docker'a
 
-Obrazy utworzą się automatycznie podczas uruchomienia kompozycji z opcja `--build`. Możemy jednak przygotować wczesniej obraz aplikacji i ewentualnie umieścić go w repozytorium Docker by przyspieszyć tworzenie kompozycji. Poniżej polecenia tworzenia obrazów.
+Obrazy utworzą się automatycznie podczas uruchomienia kompozycji z opcja `--build`. Opcjonalnie możemy wcześniej przygotować obraz aplikacji i ewentualnie umieścić go w repozytorium Docker w celu przyspieszenia tworzenia i uruchamiania kompozycji. Poniżej polecenia tworzenia obrazów.
 
 >[!WARNING]
 > Polecenia tworzenia obrazów wydajemy w katalogu projketu **Apache SuperSet** po "zainstalowaniu" poprawek. Pamiętaj również o tym, by odpowiednio zmodyfikować konfigurację kompozycji w pliku `docker-compose.yml` tak aby użyła utworzone przez nas obrazy.
