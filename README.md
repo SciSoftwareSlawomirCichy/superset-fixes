@@ -109,7 +109,7 @@ VOLUME_NGINX_LOGS=/home/superset/nginx_logs
 
 ### Konfiguracja tokenu JWT aplikacji
 
-Token JWT jest wykorzystywany do komunikacji pomiędzy aplikacjcą SuperSet a usługami uruchamianymi w ramach kontenera SuperSet-Websocket, między innym zdalną pamięcią `redis` czy usłagami wykonywania równoległych pobrań danych.
+Token JWT jest wykorzystywany do komunikacji pomiędzy aplikacjcą SuperSet a usługami uruchamianymi w ramach kontenera SuperSet-Websocket, między innym zdalną pamięcią `redis` czy usłagami wykonywania równoległych, asynchronicznych pobrań danych.
 
 Do wygenerowannia jego wartości możemy użyć polecenia `uuidgen`:
 
@@ -128,7 +128,7 @@ Zmian dokonujemy w 2 plikach:
 
 ### Konfiguracja frontendu aplikacji
 
-**Eliminacja Błędu “Invalid Host header”**. W pliku `superset-frontend/webpack.config.js` w linii 640 należy zmienić wartość pola `allowedHosts`. Obecnie pole to reperzenntujące listę (`array`) waratości zawiera tylko wartość `all`. Należy uzupełnić listę nazwami reprezenntującymi serwer, na którym jest instalowana aplikacja np. dla nazwy serwera `devops-box-01.hgdb.org` należy ustawić:
+**Eliminacja Błędu “Invalid Host header”**. W pliku `superset-frontend/webpack.config.js` w linii 640 należy zmienić wartość pola `allowedHosts`. Obecnie pole to reperezntujące listę (`array`) wartości, zawiera tylko jedną wartość `all`. Należy uzupełnić listę nazwami reprezentującymi serwer, na którym jest instalowana aplikacja np. dla nazwy serwera `devops-box-01.hgdb.org` należy ustawić:
 
 ```js
 allowedHosts: ['all', 'devops-box-01.hgdb.org', 'devops-box-01', '192.168.3.108'],
