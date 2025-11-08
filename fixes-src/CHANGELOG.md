@@ -155,7 +155,13 @@ Dodano skrypt `docker-container`, który pozwala na poprawne uruchomienie apilac
 
 ### `superset-frontend/webpack.config.js`
 
-Poprawiono konfigurację aplikacji tak aby przyjmowała ruch z "zewnątrz" (linia 640).
+**Eliminacja Błędu "Invalid Host header"** - poważnym problemem, który podczas uruchamiania aplikacji w kontenerze Docker uniemożliwiał dostęp do serwera deweloperskiego pod nazwą hosta (`http://devops-box-01.hgdb.org:9000`), był błąd "Invalid Host header". Serwer deweloperski (WDS) w kontenerze Dockera jest domyślnie rygorystyczny i odrzuca nagłówek `Host` zawierający nazwę domenową, uznając ją za nieautoryzowaną. Adres IP (`http://192.168.3.108:9000`) działał, co potwierdzało problem z rozpoznawaniem nazwy hosta/domeny. Problem został rozwiązany przez dodanie jawnej konfiguracji w pliku webpack.config.js w sekcji devServer (linia: 640):
+
+```js
+    allowedHosts: ['all', 'devops-box-01.hgdb.org', '192.168.3.108'],
+```
+
+Ostatecznie w poprwce zastosowano zmianę uwzględniającą tylko wartość `all`, mając na uwadze fakt, że podczas instalacji produktu trzeba będzie zmienić wartość `allowedHosts` tak by lista zawierała obecną nazwę domenową oraz IP serwera, na którym aplikacja jest uruchamiana:
 
 ```js title="/superset/superset-frontend/webpack.config.js linia: 640"
     port: devserverPort,

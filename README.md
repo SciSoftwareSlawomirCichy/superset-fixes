@@ -126,6 +126,16 @@ Zmian dokonujemy w 2 plikach:
 > [!WARNING]
 > Parametr `GLOBAL_ASYNC_QUERIES_JWT_SECRET` musi przyjować taką samą wartość jak pramaetr `"jwtSecret"` w pliku `docker/superset-websocket/config.json`.
 
+### Konfiguracja frontendu aplikacji
+
+**Eliminacja Błędu “Invalid Host header”**. W pliku `superset-frontend/webpack.config.js` w linii 640 należy zmienić wartość pola `allowedHosts`. Obecnie pole to reperzenntujące listę (`array`) waratości zawiera tylko wartość `all`. Należy uzupełnić listę nazwami reprezenntującymi serwer, na którym jest instalowana aplikacja np. dla nazwy serwera `devops-box-01.hgdb.org` należy ustawić:
+
+```js
+allowedHosts: ['all', 'devops-box-01.hgdb.org', 'devops-box-01', '192.168.3.108'],
+```
+
+Po zmianie serwer zacznie akceptować nagłówki z nazwą domenową serwera, na którym jest instalowana aplikacja.
+
 ### Inne parametry konfiguracyjne kompozycji
 
 Większość parametrów konfiguracyjnych składowana jest w pliku `docker/.env`. Poniżej lista prametrów, na które warto zwrócić uwagę podczas konfiguracji kompozycji wykorzystywanej w celu produkcyjnym.
@@ -148,7 +158,7 @@ O tym jak konfigurować aplikację znajdziemy na oficjalnych stronach Apache Sup
 >[!WARNING]
 > Polecenia budowania, uruchamiania i zatrzymywania kompozycji wydajemy w katalogu projketu **Apache SuperSet** po "zainstalowaniu" poprawek i wcześniej odpowiednio przygotowanej konfiguracji kompozycji (zobacz [Skonfigurowanie kompozycji aplikacji](#skonfigurowanie-kompozycji-aplikacji) ).
 
-* **Budowa kompozycji** - kompozycję aplikacji budujemy i uruchamiamy poleceniem:
+* **Budowa kompozycji** - kompozycję aplikacji budujemy i uruchamiamy pomniższym poleceniem. Aby zatrzymać pracę kompozycji w tym trybie należy użyć kombinacji klawiszy `Ctrl+C`:
 
 ```bash
 docker compose --env-file docker/.env up --build
@@ -167,6 +177,10 @@ docker compose --env-file docker/.env down
 ```
 
 Więcej informacji na temat obsługi kompozycji kontenerów **Docker** uzyskasz na stronach [Docker Compose](https://docs.docker.com/compose/) oraz [Docker Hub](https://hub.docker.com/).
+
+## Końcowe uwagi dla instalatorów
+
+Aby zobrazować proces instalacji w pliku [SAMPLE_INSTALL_SCENARIO.md](./SAMPLE_INSTALL_SCENARIO.md) zaprezentowano **Przykładowy scenariusz instalacji**.
 
 ## Końcowe uwagi dla developerów
 
@@ -227,7 +241,7 @@ Do zarządzania kontenerami Docker w środowisku Linux możemy się wesprzeć op
 
 ![./docs/02_screen_portainer.png](./docs/02_screen_portainer.png)
 
-### Uruchomineie Portainer
+### Uruchomienie Portainer
 
 * **Ustaw wolumen kompozycji**. Domyślnie jest to katalog `/home/portainer/data`.
 * **Konfiguracja SSL** - [Portainer - how to specify SSL in docker-compose.yml?](https://stackoverflow.com/questions/52819468/portainer-how-to-specify-ssl-in-docker-compose-yml)
