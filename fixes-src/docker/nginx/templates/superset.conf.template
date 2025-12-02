@@ -17,12 +17,10 @@
 
 upstream superset_app {
     server superset:8088;
-    keepalive 100;
 }
 
 upstream superset_websocket {
     server superset_websocket:8080;
-    keepalive 100;
 }
 
 server {
@@ -35,13 +33,6 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
-        proxy_set_header Host $host;
-    }
-
-    location ${SUPERSET_APP_ROOT}/static {
-        # Proxy to superset-node
-        proxy_pass http://superset-node:9000${SUPERSET_APP_ROOT}/static;
-        proxy_http_version 1.1;
         proxy_set_header Host $host;
     }
 

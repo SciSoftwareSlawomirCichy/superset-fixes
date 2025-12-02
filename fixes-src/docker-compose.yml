@@ -65,7 +65,6 @@ services:
     links:
       - superset
       - superset-websocket
-      - superset-node
     restart: unless-stopped
     ports:
       - "${SUPERSET_FRONT:-80}:80"
@@ -137,6 +136,8 @@ services:
     volumes: *superset-volumes
     environment:
       SUPERSET__SQLALCHEMY_EXAMPLES_URI: "duckdb:////app/data/examples.duckdb"
+    healthcheck:
+      disable: true
 
   superset-websocket:
     env_file:
@@ -213,43 +214,6 @@ services:
     healthcheck:
       disable: true
 
-  superset-node:
-    build:
-      context: .
-      target: superset-node
-      args:
-        # This prevents building the frontend bundle since we'll mount local folder
-        # and build it on startup while firing docker-frontend.sh in dev mode, where
-        # it'll mount and watch local files and rebuild as you update them
-        DEV_MODE: "true"
-        BUILD_TRANSLATIONS: ${BUILD_TRANSLATIONS:-false}
-    environment:
-      # set this to false if you have perf issues running the npm i; npm run dev in-docker
-      # if you do so, you have to run this manually on the host, which should perform better!
-      BUILD_SUPERSET_FRONTEND_IN_DOCKER: true
-      NPM_RUN_PRUNE: false
-      SCARF_ANALYTICS: "${SCARF_ANALYTICS:-}"
-      # configuring the dev-server to use the host.docker.internal to connect to the backend
-      # It is in NMP task "docker-container" in superset-frontend/package.json ("scripts")
-      superset: "http://superset:8088"
-    ports:
-      - "127.0.0.1:9000:9000" # exposed by nginx, so, loopback schould be OK
-    container_name: superset_node
-    hostname: superset-node
-    networks:
-      - superset-network
-    links:
-      - db
-      - redis
-      - superset
-    command: ["/app/docker/docker-frontend.sh"]
-    env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
-    volumes: *superset-volumes
-
   superset-worker:
     build:
       <<: *common-build
@@ -277,8 +241,10 @@ services:
     volumes: *superset-volumes
     extra_hosts:
       - "host.docker.internal:host-gateway"
+#    healthcheck:
+#      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
     healthcheck:
-      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+      disable: true
     # Bump memory limit if processing selenium / thumbnails on superset-worker
     # mem_limit: 2038m
     # mem_reservation: 128M

@@ -375,13 +375,6 @@ server {
         proxy_set_header Host $host;
     }
 
-    location ${SUPERSET_APP_ROOT}/static {
-        # Proxy to superset-node
-        proxy_pass http://superset-node:9000${SUPERSET_APP_ROOT}/static;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-    }
-
     location ${SUPERSET_APP_ROOT} {
         proxy_pass http://superset_app${SUPERSET_APP_ROOT};
         proxy_set_header Host $http_host;

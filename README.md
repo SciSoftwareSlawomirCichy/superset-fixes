@@ -264,3 +264,85 @@ docker compose -f portainer-compose.yml up -d
   * Wybierz środowisko (np. `local`).
   * W polu `Public IP` wprowadź adres IP hosta.
   * Kliknij `Update environment`.
+
+## Konfiguracja terminacji SSL
+
+Obsługę SSL (protokół HTTPS) możemy zdefiniować za pomocą proxy `Nginx`. Poniżej przykładowa konfiguracja serwera:
+
+```properties title="/etc/nginx/conf.d/superset.con"
+upstream superset_app {
+    # Proxy to nginx container (superset-nginx)
+    server 192.168.122.80:1080;
+}
+
+upstream superset_websocket {
+    # Proxy to websocket container (superset-websocket)
+    server 192.168.122.80:10080;
+}
+
+upstream portainer_service {
+    # Proxy to portainer container (portainer)
+    server 192.168.122.80:29002;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name     baw.demo.local;
+    access_log      /var/log/nginx/superset_demo_local.access.log main;
+    error_log       /var/log/nginx/superset_demo_local.error.log;
+
+    ssl_certificate          /opt/IBM/security/scisoftware/server-cert-chain.crt;
+    ssl_certificate_key      /opt/IBM/security/scisoftware/server-cert.key;
+    ssl_trusted_certificate  /opt/IBM/security/scisoftware/scisoftware_intermediate_ca_chain.crt;
+
+    root /opt/IBM/HTTPServer/htdocs;
+
+    # 🔑 GLOBAL RULE: Removes the port from every Location header sent by ALL proxy_passes in this server block.
+    # ⚠️ NOTE: If your target servers always return a port e.g., Node1_SingleClusterMember1:9443, then this rule
+    # will ALWAYS execute, removing the port.1
+    proxy_redirect ~^(http[s]?://[^/]+):\d+(.*)$ $1$2;
+
+    # ----------------------------------------------------
+    # Konfiguracje poszczególnych aplikacji
+    # ----------------------------------------------------
+
+    location /ws {
+        proxy_pass http://superset_websocket;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+    location /analytics {
+        return 302 https://$http_host/analytics/superset/welcome/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+    }
+    location /analytics/ {
+        proxy_pass http://superset_app/analytics/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+    }
+
+    location /portainer/ {
+        proxy_pass http://portainer_service/;
+    }
+
+}
+
+```
+
+## Skrypty pomocnicze
+
+W katalogu `bin` znajdują się skrypty pomocnicze do obsługi kompozycji. Pamietaj by przed ich uruchamianiem zweryfikować poprawność ich konfiguracji. Sprawdź czy wykorzystywane przez te skrypty ścieżki są poprawne np. definicja `SUPERSET_HOME` w `./bin/superset-compose-service.sh`:
+
+```bash title="./bin/superset-compose-service.sh"
+export SUPERSET_HOME="../../superset-6.0-sci"
+```

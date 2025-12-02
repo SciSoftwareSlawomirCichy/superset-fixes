@@ -7,8 +7,8 @@ services:
     networks:
       - default-network
     ports:
-      - "9002:9000"
-      - "8000:8000"
+      - "29002:9000"
+      - "28000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
