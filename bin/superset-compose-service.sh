@@ -5,8 +5,9 @@ export SUPERSET_HOME="../../superset-6.0-sci"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # echo "Script dir: ${SCRIPT_DIR}"
-# Change dir to main project dir, where docker configuration files are located
+cd "${SCRIPT_DIR}"
 export PROJECT_HOME="${SCRIPT_DIR}/.."
+# Change dir to main project dir, where docker configuration files are located
 cd "${SUPERSET_HOME}"
 
 
