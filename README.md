@@ -77,7 +77,8 @@ Wolumeny kompozycji to miejsca na dysku, gdzie składowane będą dane naszego s
 | `VOLUME_DB_HOME` | `/home/superset/db_home` | Pliki danych wykorzystywanej przez aplikację SuperSet bazy danych PostgreSQL. |
 | `VOLUME_REDIS_HOME` | `/home/superset/redis` | Pliki danych wykorzystywanej przez aplikację SuperSet serwer Redis.|
 | `VOLUME_WEBSOCKET_NMP` | `/home/superset/superset_websocket_nmp` | Pliki danych i konfiguracja usług SuperSet-Websocket.|
-| `VOLUME_NGINX_LOGS`  | `/home/superset/nginx_logs` | Katalog z logami serwera Apache Nginx pełniącego rolę proxy, strefy dostępu do usług działłająych w ramach kompozycji Docker.  |
+| `VOLUME_NGINX_LOGS`  | `/home/superset/nginx_logs` | Katalog z logami serwera Apache Nginx pełniącego rolę proxy, strefy dostępu do usług działająych w ramach kompozycji Docker. Folder montowany jest w punkcie `/var/log/nginx` kontenera Nginx. |
+| `VOLUME_NGINX_DATA`  | `/home/superset/nginx_data` | Katalog z dodatkowymi danymi serwrera Nginx np. na certyfikaty niezbędne do konfiguracji SSL. Folder montowany jest w punkcie `/opt` kontenera Nginx. |
 
 * Tworzymy katalogi dannych systemu:
 
@@ -88,12 +89,14 @@ export VOLUME_DB_HOME="/home/superset/db_home"
 export VOLUME_REDIS_HOME="/home/superset/redis"
 export VOLUME_WEBSOCKET_NMP="/home/superset/superset_websocket_nmp"
 export VOLUME_NGINX_LOGS="/home/superset/nginx_logs"
+export VOLUME_NGINX_DATA="/home/superset/nginx_data"
 mkdir -p $VOLUME_SUPERSET_HOME
 mkdir -p $VOLUME_SUPERSET_DATA
 mkdir -p $VOLUME_DB_HOME
 mkdir -p $VOLUME_REDIS_HOME
 mkdir -p $VOLUME_WEBSOCKET_NMP
 mkdir -p $VOLUME_NGINX_LOGS
+mkdir -p $VOLUME_NGINX_DATA
 ```
 
 * Weryfikujemy i jeżeli trzeba zmieniamy zawartość pliku `docker\.env`:
@@ -105,6 +108,7 @@ VOLUME_DB_HOME=/home/superset/db_home
 VOLUME_REDIS_HOME=/home/superset/redis
 VOLUME_WEBSOCKET_NMP=/home/superset/superset_websocket_nmp
 VOLUME_NGINX_LOGS=/home/superset/nginx_logs
+VOLUME_NGINX_DATA=/home/superset/nginx_data
 ```
 
 ### Konfiguracja tokenu JWT aplikacji

@@ -25,7 +25,7 @@ upstream superset_websocket {
 
 server {
     listen 80 default_server;
-    server_name  _;
+    server_name _;
     error_log  /var/log/nginx/superset-error.log;
 
     location /ws {

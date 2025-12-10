@@ -26,7 +26,7 @@ down() {
 
 stop() {
   echo "**************************"
-  echo "* Stopping SuperSet containers...  "
+  echo "* Stopping SuperSet' containers...  "
   echo "**************************"
   # docker compose --env-file docker/.env down
   # Universal command :)
@@ -42,11 +42,17 @@ case "$1" in
     start)
         start
         ;;
+    down)
+        down
+        ;;
     stop)
         stop
         ;;
+    restart)
+        start
+        ;;
     *)
-        echo "Usage: $0 {start|down|stop}"
+        echo "Usage: $0 {start|down|stop|restart}"
 esac
 
 exit 0
